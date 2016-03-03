@@ -36,3 +36,39 @@ use the cluster center’s attributes to draw the corresponding digit on an 8 x 
 You can do this using any matrix-to-bit-map format – e.g., pgm: http://en.wikipedia.org/wiki/Netpbm_format#PGM_example
 """
 
+#################
+# Data structures
+#################
+
+features_train, labels_train = load_optdigits_data("optdigits/optdigits.train")
+features_test, labels_test = load_optdigits_data("optdigits/optdigits.test")
+# 3823 training features, 3823 training labels
+# 1797 test features, 1797 test labels
+# each of the features_train and features_test instances has 64 features
+
+# K = 10 clusters
+# each cluster has x number of instances
+# each instance is a vector from the training (or test, in testing) data with 64 attributes
+clusters = [i for i in xrange(0, 10)]
+centers = [i for i in xrange(0, 10)]
+
+# initial cluster centers should be chosen at random, with each attribute Ai being an integer in the range [0,16]
+#
+# for i in features_train:
+#     print i,"\n"
+# convert lists to arrays to compute mean for centroid calculation
+# compute new centroid with np.mean
+# features_train, labels_train = convert_data_to_arrays(labels_train, labels_train)
+# features_test, labels_test = convert_data_to_arrays(labels_test, labels_test)
+features_train = np.asarray(features_train)
+labels_train = np.asarray(labels_train)
+features_test = np.asarray(features_test)
+labels_test = np.asarray(labels_test)
+
+centroid = []
+print features_train.shape
+centroid = np.mean(features_train, axis=0)
+print centroid
+
+# visualization
+# (i*256)/16 to assign to "buckets" for PGM (PGM uses 1-256 instead of 1-16)

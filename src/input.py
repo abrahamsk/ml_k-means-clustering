@@ -9,11 +9,12 @@
 
 import numpy as np
 
+
 # use modified TA-provided code from HW3 for data input
 def load_optdigits_data(filename):
     """
-  Each line in the datafile is a csv with features values, followed by a label, per sample; one sample per line
-  """
+    Each line in the datafile is a csv with features values, followed by a label, per sample; one sample per line
+    """
 
     "The file function reads the filename from the current directory, unless you provide an absolute path " \
     "e.g. /path/to/file/file.py or C:\\path\\to\\file.py"
@@ -49,10 +50,10 @@ def load_optdigits_data(filename):
 
 def convert_data_to_arrays(features, labels):
     """
-  conversion to a numpy array is easy if you're starting with a List of lists.
-  The returned array has dimensions (M,N), where M is the number of lists and N is the number of
+    conversion to a numpy array is easy if you're starting with a List of lists.
+    The returned array has dimensions (M,N), where M is the number of lists and N is the number of
 
-  """
+    """
 
     return np.asarray(features), np.asarray(labels)
 
@@ -60,8 +61,6 @@ def convert_data_to_arrays(features, labels):
 def main():
     features_train, labels_train = load_optdigits_data("optdigits/optdigits.train")
     features_test, labels_test = load_optdigits_data("optdigits/optdigits.test")
-    # 3823 training features, 3823 training labels
-    # 1797 test features, 1797 test labels
 
     features_train, labels_train = convert_data_to_arrays(labels_train, labels_train)
     features_test, labels_test = convert_data_to_arrays(labels_test, labels_test)
