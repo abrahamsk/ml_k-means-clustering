@@ -37,22 +37,6 @@ use the cluster center’s attributes to draw the corresponding digit on an 8 x 
 You can do this using any matrix-to-bit-map format – e.g., pgm: http://en.wikipedia.org/wiki/Netpbm_format#PGM_example
 """
 
-#################
-# Data structures
-#################
-
-features_train, labels_train = load_optdigits_data("optdigits/optdigits.train")
-features_test, labels_test = load_optdigits_data("optdigits/optdigits.test")
-# 3823 training features, 3823 training labels
-# 1797 test features, 1797 test labels
-# each of the features_train and features_test instances has 64 features
-
-# K = 10 clusters
-# each cluster has x number of instances
-# each instance is a vector from the training (or test, in testing) data with 64 attributes
-clusters = [i for i in xrange(0, 10)]
-centers = [i for i in xrange(0, 10)]
-
 
 ###########
 # Functions
@@ -69,15 +53,41 @@ def euclidean_dist(x, y):
     return np.sqrt(np.sum((x - y) ** 2))
 
 
-def check_cluster_centers(old_cluster, new_cluster):
+def check_cluster_centers(clusters, new_clusters):
     """
     Stop iterating K-Means when all cluster centers stop changing
     or if the algorithm is stuck in an oscillation.
     Use d or d^2 (Euclidean distance) to compute distances between each index of centers
-    :param old_cluster:
-    :param new_cluster:
-    :return false if cluster centers have stopped moving:
+    :param clusters:
+    :param new_clusters:
+    :return false if cluster centers have stopped moving (or threshold of .1 has been met):
     """
+    # check for empty new_clusters (no new centroids during first k-means iteration)
+    if len(new_clusters) == 0:
+        return True
+
+    distances = []
+    # for i in xrange(len(clusters)):
+    #     for j in clusters[i]:
+    #         distances.append((euclidean_dist(clusters[i, j], new_clusters[i, j])))
+
+    # enumerate(thing), where thing is either an iterator or a sequence,
+    # returns a iterator that will return (0, thing[0]), (1, thing[1]), (2, thing[2]), etc
+    for i, j in enumerate(clusters):
+        for k, l in enumerate(clusters[i]):
+            distances.append(euclidean_dist(clusters[i][k], new_clusters[i][k]))
+
+    met_threshold = []
+    for d in distances:
+        if (d <= 0.1):
+            met_threshold.append(d)
+
+    # if all clusters have stopped moving
+    if len(met_threshold) == len(distances):
+        return False
+    # if clusters are still moving, keep going
+    else:
+        return True
 
 
 #######################################################################
@@ -87,7 +97,11 @@ def check_cluster_centers(old_cluster, new_cluster):
 # Inner loop: go until centroid is not moving or until threshold is met
 # (distance between prev centroid and current centroid is .1)
 #######################################################################
-for i in xrange(0, 5):
+def k_means(features_train, labels_train, features_test, labels_test):
+    """
+    Run k-meas algorithm
+    :return:
+    """
     # initial cluster centers should be chosen at random, with each attribute Ai being an integer in the range [0,16]
     # for each of the 10 centers, generate a length 64 cluster
     # len 10 with 64 attributes at each of the 10 indices
@@ -110,9 +124,36 @@ for i in xrange(0, 5):
         # take mean of old centroid, not features_train
         centroids = np.mean(features_train, axis=0)
 
+
 ###############
 # Visualization
 ###############
 # (i*256)/16 to assign to "buckets" for PGM (PGM uses 1-256 instead of 1-16)
 # create 8x8 matrix:
 # print out 8 attributes for each row
+
+
+######
+# Main
+######
+def main():
+    # data structures
+    features_train, labels_train = load_optdigits_data("optdigits/optdigits.train")
+    features_test, labels_test = load_optdigits_data("optdigits/optdigits.test")
+    # 3823 training features, 3823 training labels
+    # 1797 test features, 1797 test labels
+    # each of the features_train and features_test instances has 64 features
+
+    # K = 10 clusters
+    # each cluster has x number of instances
+    # each instance is a vector from the training (or test, in testing) data with 64 attributes
+    clusters = [i for i in xrange(0, 10)]
+    centers = [i for i in xrange(0, 10)]
+
+    # Run k-means
+    for l in xrange(0, 5):
+        k_means(features_train, labels_train, features_test, labels_test)
+
+
+if __name__ == "__main__":
+    main()
