@@ -7,7 +7,7 @@
 # 3/8/16
 
 from input import *
-import random, numpy as np
+import random, numpy as np, timing
 
 """
 Write a program to implement K-means clustering using Euclidean distance, and to
@@ -42,7 +42,7 @@ You can do this using any matrix-to-bit-map format – e.g., pgm: http://en.wiki
 # Functions
 ###########
 
-def euclidean_dist(x, y):
+def euclidean_dist(instance_features, center):
     """
     L2 (Euclidean) distance
     Use for distance calculation
@@ -50,7 +50,7 @@ def euclidean_dist(x, y):
     :param y:
     :return:
     """
-    return np.sqrt(np.sum((x - y) ** 2))
+    return np.sqrt(np.sum(((f - c) ** 2 for f, c in zip(instance_features, center))))
 
 
 def check_cluster_centers(clusters, new_clusters):
@@ -109,10 +109,32 @@ def k_means(features_train, labels_train, features_test, labels_test):
     centroids = [[0 for i in xrange(0, 64)] for j in xrange(0, 10)]
     # Stop iterating K-Means when all cluster centers stop changing
     # or if the algorithm is stuck in an oscillation.
-    ############# while (check_cluster_centers(centers, centroids)):
-    #######################
-    # Compute new centroids
-    #######################
+    ########## while (check_cluster_centers(centers, centroids)):
+
+    ################################################
+    # Form K clusters by assigning each point to its
+    # closest centroid using Euclidean distance.
+    # Find closest center for each instance
+    # by iterating through centers and finding min
+    # distance from instance to one of the centers.
+    ################################################
+    dist = []
+    compare_dist = []
+    for f in features_train:
+        compare_dist = []
+        for c in centers:
+            compare_dist.append(euclidean_dist(f, c))
+        dist.append(min(compare_dist))
+    print len(dist)  # 38230
+    print dist
+
+    # clusters assigned based on shortest euclidean distance
+    # for each feature instance
+
+
+    ########################################
+    # Recompute the centroid of each cluster
+    ########################################
     # convert lists to arrays to compute mean for centroid calculation
     # compute new centroid with np.mean
     features_train = np.asarray(features_train)
@@ -129,7 +151,7 @@ def k_means(features_train, labels_train, features_test, labels_test):
         for c in centroids:
             c.append(np.mean(cluster, axis=0))
             # cluster_counter += 1
-    print centroids
+            # print centroids
 
 
 
