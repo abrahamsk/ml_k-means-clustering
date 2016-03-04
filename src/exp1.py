@@ -51,6 +51,7 @@ def euclidean_dist(instance_features, center):
     :return:
     """
     return np.sqrt(np.sum(((f - c) ** 2 for f, c in zip(instance_features, center))))
+    # use center[1] when passing in centers enumerated, to access centers and not identifying cluster #
 
 
 def check_cluster_centers(clusters, new_clusters):
@@ -118,19 +119,50 @@ def k_means(features_train, labels_train, features_test, labels_test):
     # by iterating through centers and finding min
     # distance from instance to one of the centers.
     ################################################
-    dist = []
+    clusters = []
+    # minimum distances between feature vectors and centers
+    min_dist = []
+    # distances to compare to get minimum
     compare_dist = []
+    # keep track of center with min distance
+    track_center = []
+    # center with min distance to feature vector
+    min_dist_center = []
+
+    # 1)
     for f in features_train:
         compare_dist = []
         for c in centers:
             compare_dist.append(euclidean_dist(f, c))
-        dist.append(min(compare_dist))
-    print len(dist)  # 38230
-    print dist
+            track_center.append(c)
+        min_dist.append(min(compare_dist))
+        clusters.append(f)
+    print len(min_dist)  # 3823
+    print min_dist
+
+    # 2)
+    # clusters = {}
+    # for f in features_train:
+    #     min_dist = min(euclidean_dist(f, c) for c in enumerate(centers))
+    #
+    #
+    # print len(min_dist)  # 3823
+    # print min_dist
 
     # clusters assigned based on shortest euclidean distance
     # for each feature instance
 
+    # 3)
+    # clusters = {}
+    # for f in features_train:
+    #     min_dist = min([(i[0], euclidean_dist(f, i))  for i in enumerate(centers)], key=lambda t:t[1])
+    #     try:
+    #         clusters[min_dist].append(f)
+    #     except KeyError:
+    #         clusters[min_dist]=[f]
+    # print clusters
+
+    # np.linalg.norm(f - centers[i[0]])
 
     ########################################
     # Recompute the centroid of each cluster
@@ -152,7 +184,6 @@ def k_means(features_train, labels_train, features_test, labels_test):
             c.append(np.mean(cluster, axis=0))
             # cluster_counter += 1
             # print centroids
-
 
 
 ###############
