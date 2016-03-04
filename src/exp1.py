@@ -106,23 +106,31 @@ def k_means(features_train, labels_train, features_test, labels_test):
     # for each of the 10 centers, generate a length 64 cluster
     # len 10 with 64 attributes at each of the 10 indices
     centers = [[random.randint(0, 16) for i in xrange(0, 64)] for j in xrange(0, 10)]
-    centroids = []
+    centroids = [[0 for i in xrange(0, 64)] for j in xrange(0, 10)]
     # Stop iterating K-Means when all cluster centers stop changing
     # or if the algorithm is stuck in an oscillation.
-    while (check_cluster_centers(centers, centroids)):
-        #######################
-        # Compute new centroids
-        #######################
-        # convert lists to arrays to compute mean for centroid calculation
-        # compute new centroid with np.mean
-        features_train = np.asarray(features_train)
-        labels_train = np.asarray(labels_train)
-        features_test = np.asarray(features_test)
-        labels_test = np.asarray(labels_test)
-        # features_train.shape = (3823, 64)
-        centroids = []
-        # take mean of old centroid, not features_train
-        centroids = np.mean(features_train, axis=0)
+    ############# while (check_cluster_centers(centers, centroids)):
+    #######################
+    # Compute new centroids
+    #######################
+    # convert lists to arrays to compute mean for centroid calculation
+    # compute new centroid with np.mean
+    features_train = np.asarray(features_train)
+    labels_train = np.asarray(labels_train)
+    features_test = np.asarray(features_test)
+    labels_test = np.asarray(labels_test)
+    # features_train.shape = (3823, 64)
+    centroids = [[0 for i in xrange(0, 64)] for j in xrange(0, 10)]
+    # for each cluster,
+    # take mean of of the instances in the cluster to get new centroid
+    cluster_counter = 0
+    for cluster in centers:
+        # each center will still have 64 attributes
+        for c in centroids:
+            c.append(np.mean(cluster, axis=0))
+            # cluster_counter += 1
+    print centroids
+
 
 
 ###############
@@ -151,8 +159,8 @@ def main():
     centers = [i for i in xrange(0, 10)]
 
     # Run k-means
-    for l in xrange(0, 5):
-        k_means(features_train, labels_train, features_test, labels_test)
+    ############# for l in xrange(0, 5):
+    k_means(features_train, labels_train, features_test, labels_test)
 
 
 if __name__ == "__main__":
