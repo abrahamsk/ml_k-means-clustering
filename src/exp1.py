@@ -119,7 +119,8 @@ def k_means(features_train, labels_train, features_test, labels_test):
     # by iterating through centers and finding min
     # distance from instance to one of the centers.
     ################################################
-    clusters = {}
+    # K clusters to match K centers
+    clusters = [[] for i in xrange(len(centers))]
     # minimum distances between feature vectors and centers
     min_dist = []
     # distances to compare to get minimum
@@ -136,26 +137,11 @@ def k_means(features_train, labels_train, features_test, labels_test):
     # find minimum distances from f -> c and build clusters
     # out of features with min distance to center
     for f in features_train:
-        # for c in centers:
-        for i, c in enumerate(centers):
+        for c in centers:
             # find minimum distance
             dists.append(euclidean_dist(f, c))
         idx = dists.index(min(dists))
-        # clusters(idx).append(f)
-        if centers[0] in clusters:
-            clusters[centers[0]].append(centers[1])
-        else:
-            clusters[centers[0]] = [centers[1]]
-
-        # years_dict = dict()
-        # for line in list:
-        # if line[0] in years_dict:
-        # # append the new number to the existing array at this slot
-        # years_dict[line[0]].append(line[1])
-        # else:
-        # # create a new array in this slot
-        # years_dict[line[0]] = [line[1]]
-
+        clusters[idx].append(f)
         # clear distances list
         dists = []
 
