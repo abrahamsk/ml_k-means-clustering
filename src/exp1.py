@@ -119,7 +119,7 @@ def k_means(features_train, labels_train, features_test, labels_test):
     # by iterating through centers and finding min
     # distance from instance to one of the centers.
     ################################################
-    clusters = []
+    clusters = {}
     # minimum distances between feature vectors and centers
     min_dist = []
     # distances to compare to get minimum
@@ -129,16 +129,46 @@ def k_means(features_train, labels_train, features_test, labels_test):
     # center with min distance to feature vector
     min_dist_center = []
 
-    # 1)
+    # 0
+    # distances from instances to centers
+    dists = []
+    # Euclidean distance from features to centers
+    # find minimum distances from f -> c and build clusters
+    # out of features with min distance to center
     for f in features_train:
-        compare_dist = []
-        for c in centers:
-            compare_dist.append(euclidean_dist(f, c))
-            track_center.append(c)
-        min_dist.append(min(compare_dist))
-        clusters.append(f)
-    print len(min_dist)  # 3823
-    print min_dist
+        # for c in centers:
+        for i, c in enumerate(centers):
+            # find minimum distance
+            dists.append(euclidean_dist(f, c))
+        idx = dists.index(min(dists))
+        # clusters(idx).append(f)
+        if centers[0] in clusters:
+            clusters[centers[0]].append(centers[1])
+        else:
+            clusters[centers[0]] = [centers[1]]
+
+        # years_dict = dict()
+        # for line in list:
+        # if line[0] in years_dict:
+        # # append the new number to the existing array at this slot
+        # years_dict[line[0]].append(line[1])
+        # else:
+        # # create a new array in this slot
+        # years_dict[line[0]] = [line[1]]
+
+        # clear distances list
+        dists = []
+
+    # 1)
+    # for f in features_train:
+    #     compare_dist = []
+    #     for c in centers:
+    #         compare_dist.append(euclidean_dist(f, c))
+    #         track_center.append(c)
+    #     min_dist.append(min(compare_dist))
+    #     clusters.append(f)
+    # print len(min_dist)  # 3823
+    # print min_dist
 
     # 2)
     # clusters = {}
