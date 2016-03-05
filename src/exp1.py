@@ -130,7 +130,6 @@ def k_means(features_train, labels_train, features_test, labels_test):
     # center with min distance to feature vector
     min_dist_center = []
 
-    # 0
     # distances from instances to centers
     dists = []
     # Euclidean distance from features to centers
@@ -145,41 +144,6 @@ def k_means(features_train, labels_train, features_test, labels_test):
         # clear distances list
         dists = []
 
-    # 1)
-    # for f in features_train:
-    #     compare_dist = []
-    #     for c in centers:
-    #         compare_dist.append(euclidean_dist(f, c))
-    #         track_center.append(c)
-    #     min_dist.append(min(compare_dist))
-    #     clusters.append(f)
-    # print len(min_dist)  # 3823
-    # print min_dist
-
-    # 2)
-    # clusters = {}
-    # for f in features_train:
-    #     min_dist = min(euclidean_dist(f, c) for c in enumerate(centers))
-    #
-    #
-    # print len(min_dist)  # 3823
-    # print min_dist
-
-    # clusters assigned based on shortest euclidean distance
-    # for each feature instance
-
-    # 3)
-    # clusters = {}
-    # for f in features_train:
-    #     min_dist = min([(i[0], euclidean_dist(f, i))  for i in enumerate(centers)], key=lambda t:t[1])
-    #     try:
-    #         clusters[min_dist].append(f)
-    #     except KeyError:
-    #         clusters[min_dist]=[f]
-    # print clusters
-
-    # np.linalg.norm(f - centers[i[0]])
-
     ########################################
     # Recompute the centroid of each cluster
     ########################################
@@ -190,16 +154,34 @@ def k_means(features_train, labels_train, features_test, labels_test):
     features_test = np.asarray(features_test)
     labels_test = np.asarray(labels_test)
     # features_train.shape = (3823, 64)
+    # random list so length of list is correct
     centroids = [[0 for i in xrange(0, 64)] for j in xrange(0, 10)]
-    # for each cluster,
-    # take mean of of the instances in the cluster to get new centroid
-    cluster_counter = 0
-    for cluster in centers:
-        # each center will still have 64 attributes
-        for c in centroids:
-            c.append(np.mean(cluster, axis=0))
-            # cluster_counter += 1
-            # print centroids
+    # for each cluster, take mean of of the instances in the cluster to get new centroid
+
+    # If a cluster is empty:
+    # Choose a replacement centroid
+    # at random, or from cluster that has highest SSE
+    # for i in clusters:
+    #     if len(i) == 0:  # possible to have zero-length clusters
+    #         print "empty cluster"
+    print len(clusters[0][0])
+
+    # for i in xrange(len(centers)):
+    #     # print clusters[i]
+    #     # print centroids[i]  # all zeroes
+    #     centroids[i] = np.mean(clusters[i], axis=0)  # np.mean(cluster, axis = 0)
+    # print centroids
+
+    # np.sum(((f - c) ** 2 for f, c in zip(instance_features, center)))
+
+    # 1
+    # cluster_counter = 0
+    # for center in centers:
+    #     # each center will still have 64 attributes
+    #     for centroid in centroids:
+    #         centroid.append(np.mean(center, axis=0))
+    #         # cluster_counter += 1
+    #         # print centroids
 
 
 ###############
