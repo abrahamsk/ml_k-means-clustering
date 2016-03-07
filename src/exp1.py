@@ -75,9 +75,6 @@ def k_means_training(features_train, labels_train):
         num_instances = len(features_train)
         clusters = build_clusters(dists, num_instances)
 
-        # stopping condition
-        continue_k_means = True
-
         # check for empty clusters and retry (reinitialize centers, get distances, and build clusters)
         # if there are any empty clusters present
         check_empty = False
@@ -99,14 +96,36 @@ def k_means_training(features_train, labels_train):
             count_loop += 1
             print "\nRebuilding clusters, time", count_loop
 
+        check_threshold_stopping_cond = True
         # if there are no empty clusters, proceed
         if check_empty is False:
-            # copy centers to compare with new centers
-            store_centers = [row[:] for row in centers]
-            # recompute the center of each cluster
-            centers = update_centers(clusters, features_train)
-            dists = compute_euclidean_distances(features_train, centers)
-            clusters = build_clusters(dists, num_instances)
+            # continue until stopping conditions are met
+            while check_threshold_stopping_cond is True:
+                # copy centers to compare with new centers
+                store_centers = [row[:] for row in centers]
+                # recompute the center of each cluster
+                centers = update_centers(clusters, features_train)
+                dists = compute_euclidean_distances(features_train, centers)
+                clusters = build_clusters(dists, num_instances)
+                check_empty = (check_empty_clusters(clusters))
+                if check_empty:
+                    print "New cluster is empty"
+                # check stopping condition after creating clusters
+                for i in xrange(k):
+                    if euclidean_dist(store_centers[i], centers[i]) > .001:
+                        check_threshold_stopping_cond = True
+                    else:
+                        check_threshold_stopping_cond = False
+
+    print len(centers)
+    print "------------"
+    for i in centers:
+        print len(i)
+    print "--------------------------------------------------------"
+
+    # only need to keep centers for testing
+    with open('outfile', 'w') as file:
+        file.writelines('\t'.join(str(j) for j in i) + '\n' for i in centers)
 
 
 
@@ -117,6 +136,17 @@ def k_means_testing(features_test, labels_test):
     :return:
     """
     print "K-Means Testing"
+    # read in trained data
+    centers = open("outfile", "r")
+    data = []
+    for line in centers:
+        number_strings = line.split()  # Split the line on runs of whitespace
+        numbers = [n for n in number_strings]
+        data.append(numbers)  # Add the "row" to your list.
+    print len(data)
+    print "--------"
+    for d in data:
+        print len(d)
 
 
 ###############
@@ -146,7 +176,7 @@ def main():
 
     # Run k-means
     k_means_training(features_train, labels_train)
-    # k_means_testing(features_test, labels_test)
+    k_means_testing(features_test, labels_test)
 
 
 if __name__ == "__main__":
