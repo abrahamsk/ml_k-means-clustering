@@ -7,6 +7,7 @@
 # 3/8/16
 
 from input import *
+from kmeans_func import *
 import random, numpy as np, math, sys, timing
 
 """
@@ -36,72 +37,6 @@ for any cluster, and therefore no test digit will ever get that label.
 use the cluster center’s attributes to draw the corresponding digit on an 8 x 8 grid.
 You can do this using any matrix-to-bit-map format – e.g., pgm: http://en.wikipedia.org/wiki/Netpbm_format#PGM_example
 """
-
-####################
-# Program parameters
-####################
-k = 10
-
-
-###########
-# Functions
-###########
-def initialize_centers():
-    """
-    Initialize random centers
-    :return:
-    """
-    centers = [[random.randint(0, 16) for i in xrange(0, 64)] for j in xrange(0, 10)]
-    return centers
-
-
-def compute_euclidean_distances(instances, centers):
-    """
-    Calculate distances from feature instances to centers
-    Euclidean distance from features to centers
-    will use minimum distances from f -> c to build clusters
-    :param instances:
-    :param centers:
-    :return:
-    """
-    # all distances for all centers
-    all_distances = []
-    # loop 10 times for k = 10
-    for i in xrange(0, 10):
-        # distances for a single center
-        dist_for_one_center = []
-        for j in xrange(len(instances)):
-            dist_for_one_center.append(euclidean_dist(instances[j], centers[i]))
-        # build list of lists for all distances from instances -> centers
-        all_distances.append(dist_for_one_center)
-    return all_distances
-
-
-def euclidean_dist(feature_instance, center):
-    """
-    L2 (Euclidean) distance
-    d(x,y)= sqrt(∑(xi − yi)^2)
-    Use for distance calculation
-    :param feature_instance: instance_features:
-    :param center: cluster center:
-    :return:
-    """
-    dist = 0
-    # iterate over all feature instances to get distances from centers
-    for i in xrange(len(feature_instance)):
-        dist += math.pow((feature_instance[i] - center[i]), 2)
-        # np.sum is super slow, use math.pow instead (np sum is optimized for arrays)
-        # dist = np.sum((feature_instance[i] - center[i]) ** 2)
-    return np.sqrt(dist)
-
-
-def build_clusters(euclidean_distances):
-    """
-    Build clusters by finding min distances from instances to centers
-    :param euclidean_distances:
-    :return:
-    """
-    clusters = [[] for i in xrange(k)]
 
 
 #######################################################################
@@ -134,9 +69,45 @@ def k_means_training(features_train, labels_train):
         # compute Euclidean distances from centers to feature instances
         dists = []
         dists = compute_euclidean_distances(features_train, centers)
+
         # build clusters using minimum distances, pass in list of distances from instances -> centers
         clusters = []
-        clusters = build_clusters(dists)
+        num_instances = len(features_train)
+        clusters = build_clusters(dists, num_instances)
+
+        # stopping condition
+        continue_k_means = True
+
+        # check for empty clusters and retry (reinitialize centers, get distances, and build clusters)
+        # if there are any empty clusters present
+        check_empty = False
+        check_empty = (check_empty_clusters(clusters))
+        count_loop = 0
+        while check_empty is True:
+            # rebuild centers and clusters
+            # get initial random clusters
+            centers = initialize_centers()
+            # compute Euclidean distances from centers to feature instances
+            dists = []
+            dists = compute_euclidean_distances(features_train, centers)
+            # build clusters using minimum distances, pass in list of distances from instances -> centers
+            clusters = []
+            num_instances = len(features_train)
+            clusters = build_clusters(dists, num_instances)
+            check_empty = False
+            check_empty = (check_empty_clusters(clusters))
+            count_loop += 1
+            print "\nRebuilding clusters, time", count_loop
+
+        # if there are no empty clusters, proceed
+        if check_empty is False:
+            # copy centers to compare with new centers
+            store_centers = [row[:] for row in centers]
+            # recompute the center of each cluster
+            centers = update_centers(clusters, features_train)
+            dists = compute_euclidean_distances(features_train, centers)
+            clusters = build_clusters(dists, num_instances)
+
 
 
 def k_means_testing(features_test, labels_test):
@@ -170,8 +141,8 @@ def main():
     # K = 10 clusters
     # each cluster has x number of instances
     # each instance is a vector from the training (or test, in testing) data with 64 attributes
-    clusters = [i for i in xrange(0, 10)]
-    centers = [i for i in xrange(0, 10)]
+    # clusters = [i for i in xrange(0, 10)]
+    # centers = [i for i in xrange(0, 10)]
 
     # Run k-means
     k_means_training(features_train, labels_train)
