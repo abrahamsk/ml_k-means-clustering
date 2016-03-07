@@ -57,10 +57,16 @@ def k_means_training(features_train, labels_train):
     # for each of the 10 centers, generate a length 64 cluster
     # len 10 with 64 attributes at each of the 10 indices
     # print "K-Means training"
+
+    # track SSE over k-means runs
+    sum_sq_errors = []
+    # store centers and save those from best SSE run
+    best_centers = []
+    # track num k-means runs
+    k_means_increment = 1
     ##############################
     # run k-means training 5 times
     ##############################
-    k_means_increment = 1
     for run in xrange(0, 5):
         text = "\rK-means training run " + str(k_means_increment) + "/" + str(5)
         sys.stdout.write(text)
@@ -107,11 +113,13 @@ def k_means_training(features_train, labels_train):
         store_centers = []
         # if there are no empty clusters, proceed
         if check_empty is False:
-            k_means_iter_counter += 1
             # continue until stopping conditions are met:
             # stop iterating K-Means when all cluster centers stop changing
             # or if the algorithm is stuck in an oscillation
-            while threshold_stopping_cond is False:
+            # while threshold_stopping_cond is False:
+            while store_centers != centers:
+                k_means_iter_counter += 1
+                print "Old and new centers still not equal..."
                 # copy centers to compare with new centers
                 store_centers = [row[:] for row in centers]
                 # recompute the center of each cluster
@@ -122,12 +130,48 @@ def k_means_training(features_train, labels_train):
                 if check_empty:
                     print "New cluster is empty"
                 # check stopping condition after creating clusters
+                # cluster_dist = compute_euclidean_distances(store_centers, centers)
                 if check_stopping_cond(store_centers, centers) is True:
                     threshold_stopping_cond = True
         print "\nK-means ran", k_means_iter_counter, "time(s)"
-    # only need to keep centers for testing
+        # print "Dist between old and new clusters", cluster_dist
+        # print store_centers
+        # print "-------------------"
+        # print centers
+
+        # compute sum squared error to select best run out of 5
+        current_sse = sum_squared_error(clusters, centers, features_train)
+        # if list has items in it, compared to current SSE and save clusters if current SSE is the best
+        if sum_sq_errors:
+            # get best stored SSE
+            min_sse_from_list, min_sse_idx = min(
+                (min_sse_from_list, min_sse_idx) for (min_sse_idx, min_sse_from_list) in enumerate(sum_sq_errors))
+            # compare current SSE to all the rest in the list
+            # if this is the best SSE yet, save current centers as the best
+            if (current_sse < min_sse_from_list):
+                best_centers = [row[:] for row in centers]
+        # add to list of all SSEs
+        sum_sq_errors.append(current_sse)
+
+    # find min SSE
+    min_val, min_val_idx = min((min_val, min_val_idx) for (min_val_idx, min_val) in enumerate(sum_sq_errors))
+    print "Min SSE:", min_val
+    print "All SSE", sum_sq_errors
+    # select best k-means run based on min SSE
+
+
+    # Choose the run (out of 5) that yields the smallest sum-squared error (SSE)
+    # For this best run, in your report give the sum-squared error,
+    # sum-squared separation, and mean entropy of the resulting clustering.
+
+    # sum squared separation (best run)
+
+    # mean entropy (best run)
+
+
+    # only need to keep centers from best k-means run for testing
     with open('outfile', 'w') as file:
-        file.writelines('\t'.join(str(j) for j in i) + '\n' for i in centers)
+        file.writelines('\t'.join(str(j) for j in i) + '\n' for i in best_centers)
 
 
 

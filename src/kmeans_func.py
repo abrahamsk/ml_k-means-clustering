@@ -159,3 +159,26 @@ def check_stopping_cond(store_centers, centers):
             else:
                 check_threshold_stopping_cond = False
     return check_threshold_stopping_cond
+
+
+def sum_squared_error(clusters, centers, instances):
+    """
+    Calculate sum squared error (SSE)
+    SSE=∑       ,∑   d(x,mi)^2
+        i=1 to K,x∈Ci
+    where Ci is the ith cluster, mi is the centroid of cluster Ci
+    (the mean vector of all the data points in Ci), and
+    d(x, mi) is the distance between data point x and centroid mi.
+    :param clusters:
+    :param centers:
+    :param instances:
+    :return:
+    """
+    sse = 0
+    # use Euclidean distance to get SSE
+    # iterate k times (for k centers)
+    for l in xrange(k):
+        for m in xrange(len(clusters[l])):
+            n = clusters[l][m]
+            sse += euclidean_dist(instances[n], centers[l])
+    return sse
