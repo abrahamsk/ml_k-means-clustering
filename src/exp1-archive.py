@@ -123,7 +123,7 @@ def sum_squared_error(feature_instances, centroids):
 #######################################################################
 def k_means(features_train, labels_train, features_test, labels_test):
     """
-    Run k-meas algorithm
+    Run k-means algorithm
     :return:
     """
     # initial cluster centers should be chosen at random, with each attribute Ai being an integer in the range [0,16]
