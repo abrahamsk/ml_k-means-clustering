@@ -157,7 +157,6 @@ def k_means_training(features_train, labels_train):
     min_val, min_val_idx = min((min_val, min_val_idx) for (min_val_idx, min_val) in enumerate(sum_sq_errors))
     print "Min SSE:", min_val
     print "All SSE", sum_sq_errors
-    # select best k-means run based on min SSE
 
 
     # Choose the run (out of 5) that yields the smallest sum-squared error (SSE)
