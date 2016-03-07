@@ -49,6 +49,8 @@ You can do this using any matrix-to-bit-map format – e.g., pgm: http://en.wiki
 def k_means_training(features_train, labels_train):
     """
     Run k-means algorithm
+    :param features_train:
+    :param labels_train:
     :return:
     """
     # initial cluster centers should be chosen at random, with each attribute Ai being an integer in the range [0,16]
@@ -79,7 +81,8 @@ def k_means_training(features_train, labels_train):
         # if there are any empty clusters present
         check_empty = False
         check_empty = (check_empty_clusters(clusters))
-        count_loop = 0
+        # keep a count of the num times there are empty clusters and rebuild is needed
+        recluster_count = 0
         while check_empty is True:
             # rebuild centers and clusters
             # get initial random clusters
@@ -91,16 +94,24 @@ def k_means_training(features_train, labels_train):
             clusters = []
             num_instances = len(features_train)
             clusters = build_clusters(dists, num_instances)
+            # check for empty clusters in rebuilt clusters
             check_empty = False
             check_empty = (check_empty_clusters(clusters))
-            count_loop += 1
-            print "\nRebuilding clusters, time", count_loop
+            recluster_count += 1
+            print "\nRebuilding clusters, time", recluster_count
 
-        check_threshold_stopping_cond = True
+        # track how many times kmeans runs
+        k_means_iter_counter = 0
+        threshold_stopping_cond = False
+        # to store current centers for comparison
+        store_centers = []
         # if there are no empty clusters, proceed
         if check_empty is False:
-            # continue until stopping conditions are met
-            while check_threshold_stopping_cond is True:
+            k_means_iter_counter += 1
+            # continue until stopping conditions are met:
+            # stop iterating K-Means when all cluster centers stop changing
+            # or if the algorithm is stuck in an oscillation
+            while threshold_stopping_cond is False:
                 # copy centers to compare with new centers
                 store_centers = [row[:] for row in centers]
                 # recompute the center of each cluster
@@ -111,18 +122,9 @@ def k_means_training(features_train, labels_train):
                 if check_empty:
                     print "New cluster is empty"
                 # check stopping condition after creating clusters
-                for i in xrange(k):
-                    if euclidean_dist(store_centers[i], centers[i]) > .001:
-                        check_threshold_stopping_cond = True
-                    else:
-                        check_threshold_stopping_cond = False
-
-    print len(centers)
-    print "------------"
-    for i in centers:
-        print len(i)
-    print "--------------------------------------------------------"
-
+                if check_stopping_cond(store_centers, centers) is True:
+                    threshold_stopping_cond = True
+        print "\nK-means ran", k_means_iter_counter, "time(s)"
     # only need to keep centers for testing
     with open('outfile', 'w') as file:
         file.writelines('\t'.join(str(j) for j in i) + '\n' for i in centers)
@@ -143,10 +145,10 @@ def k_means_testing(features_test, labels_test):
         number_strings = line.split()  # Split the line on runs of whitespace
         numbers = [n for n in number_strings]
         data.append(numbers)  # Add the "row" to your list.
-    print len(data)
-    print "--------"
-    for d in data:
-        print len(d)
+        # print len(data)
+        # print "--------"
+        # for d in data:
+        #     print len(d)
 
 
 ###############

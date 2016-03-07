@@ -128,7 +128,7 @@ def update_centers(clusters, instances):
 
 def get_features_for_cluster(cluster, instances):
     """
-    get associated features for a cluster
+    Get associated features for a cluster
     :param cluster:
     :param instances:
     :return:
@@ -138,3 +138,24 @@ def get_features_for_cluster(cluster, instances):
         features.append(instances[cluster[c]])
     # print features
     return features
+
+
+def check_stopping_cond(store_centers, centers):
+    """
+    Check loop stopping condition while running k-means
+    by comparing distances between current (stored) clusters and new clusters
+    :param store_centers:
+    :param centers:
+    :return:
+    """
+    check_threshold_stopping_cond = False
+    dists = []
+    for i in xrange(k):
+        dists.append(euclidean_dist(store_centers[i], centers[i]))
+        # print "dists", dists
+        for d in dists:
+            if d <= .001:
+                check_threshold_stopping_cond = True
+            else:
+                check_threshold_stopping_cond = False
+    return check_threshold_stopping_cond
