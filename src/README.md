@@ -34,21 +34,14 @@ In your IDE of choice or in the Python command line:
 Submitted files:
 
 input.py
-
 exp1.py
-
 exp2.py
-
 kmeans_func.py
-
 centers.outfile
-
 clusters.outfile
 
 optdigits/optdigits.train and optdigits/optdigits.test were not submitted to reduce clutter, though they are required to run the program.
-
 timing.py was only used for benchmarking and was not submitted.
 
 Troubleshooting:
-
 Add __init__.py if there's trouble running
