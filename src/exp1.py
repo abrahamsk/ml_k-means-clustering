@@ -208,7 +208,7 @@ def k_means_training_stats(labels_train):
         # Split the line on runs of whitespace
         number_strings = line.split()
         numbers = [n for n in number_strings]
-        numbers_float = [float(i) for i in numbers]
+        numbers_float = [int(i) for i in numbers]
         # Add the row to the list
         best_clusters.append(numbers_float)
 
