@@ -2,6 +2,7 @@
 
 #### Option 1: 
 Generate your own centers, clusters, and sum squared error
+
 *Ensure k-means training is **not** commented out:*
 ```
 sum_sq_error, best_centers = k_means_training(features_train, labels_train)
@@ -9,6 +10,7 @@ sum_sq_error, best_centers = k_means_training(features_train, labels_train)
 
 #### Option 2: 
 Use included centers, clusters, and sum squared error from best of 5 k-means training runs
+
 *Comment out k-means training:*
 ```
 # sum_sq_error, best_centers = k_means_training(features_train, labels_train)
@@ -21,7 +23,9 @@ The Python dependencies included at the top of each file must be installed in us
 
 ### With either Option 1 or Option 2 complete and dependencies installed:
 In your IDE of choice or in the Python command line:
+
 1. Run Experiment 1 by executing `exp1.py`
+
 2. Run Experiment 2 by executing `exp2.py`
 
 #### Etc:
