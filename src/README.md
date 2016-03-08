@@ -3,7 +3,7 @@
 #### Option 1: 
 Generate your own centers, clusters, and sum squared error
 
-*Ensure k-means training is **not** commented out:*
+*Ensure k-means training is NOT commented out:*
 ```
 sum_sq_error, best_centers = k_means_training(features_train, labels_train)
 ```
