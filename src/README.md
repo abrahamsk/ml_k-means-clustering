@@ -18,6 +18,14 @@ Use included centers, clusters, and sum squared error from best of 5 k-means tra
 
 *Make sure `centers_outfile` and `clusters_outfile` are at the same file level as exp1 and exp2*
 
+- Make sure proper k value is set in `kmeans_func.py` (comment out unneeded value)
+```
+# exp 1:
+# k = 10
+# exp 2:
+k = 30
+```
+
 #### Dependencies:
 The Python dependencies included at the top of each file must be installed in user's Python env
 

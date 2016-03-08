@@ -390,6 +390,7 @@ def visualization_results(center, idx, exp_num):
     Visualize the resulting cluster centers.
     For each of the k (10 or 30) cluster centers, use the cluster center’s attributes
     to draw the corresponding digit on an 8 x 8 grid.
+    ref: en.wikipedia.org/wiki/Netpbm_format#PGM_example
     :param center:
     :param idx:
     :param exp_num:
