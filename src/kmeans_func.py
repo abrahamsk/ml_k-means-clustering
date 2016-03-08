@@ -237,7 +237,7 @@ def entropy(cluster, instances_labels):
         count_instances_in_cluster[j] += 1
 
     # count classes per cluster
-    # iterator for the number of classes (= k = 10)
+    # iterator for the number of classes (= k)
     for i in xrange(k):
         # numerator m i,j is the number of instances in cluster i with class j
         numerator = count_instances_in_cluster[i]
