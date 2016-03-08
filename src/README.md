@@ -29,4 +29,26 @@ In your IDE of choice or in the Python command line:
 2. Run Experiment 2 by executing `exp2.py`
 
 #### Etc:
-Built with Python 2.7, Python 3.0 support is untested
+-Built with Python 2.7, Python 3.0 support is untested
+
+Submitted files:
+
+input.py
+
+exp1.py
+
+exp2.py
+
+kmeans_func.py
+
+centers.outfile
+
+clusters.outfile
+
+optdigits/optdigits.train and optdigits/optdigits.test were not submitted to reduce clutter, though they are required to run the program.
+
+timing.py was only used for benchmarking and was not submitted.
+
+Troubleshooting:
+
+Add __init__.py if there's trouble running
