@@ -6,6 +6,7 @@
 # Katie Abrahams, abrahake@pdx.edu
 # 3/8/16
 
+from __future__ import division
 import random, numpy as np, math
 
 ##################################
@@ -200,7 +201,6 @@ def sum_squared_separation(centers):
     :param centers
     :return:
     """
-    print "Getting sum squared separation for best clusters..."
     sum_sq_separation = 0
     for d in xrange(k - 1):
         c = d + 1
@@ -212,7 +212,7 @@ def sum_squared_separation(centers):
     return sum_sq_separation
 
 
-def entropy():
+def entropy(cluster, instances_labels):
     """
     Find entropy of a single cluster
     Entropy of a cluster: The degree to which a cluster consists of objects of a single class.
@@ -223,14 +223,36 @@ def entropy():
     pi, j = probability that a member of cluster i belongs to class j
     = mi,j/mi , where mi,j is the number of instances in cluster i with class j
     and mi is the number of instances in cluster i
+    :param cluster: one cluster:
+    :param instances_labels: real value of instances:
     :return ent:
     """
+    # entropy for cluster passed in arguments
     ent = 0
+    # count mi,j for numerator (number of instances in cluster i with class j)
+    count_instances_in_cluster = [[0] for i in xrange(k)]
+    for c in xrange(len(cluster)):
+        count_instances_in_cluster[instances_labels[cluster[c]]] += 1
 
-    return ent
+    # count classes per cluster
+    # iterator for the number of classes (= k = 10)
+    for i in xrange(k):
+        # numerator m i,j is the number of instances in cluster i with class j
+        numerator = count_instances_in_cluster[i]
+        # denominator mi is the number of instances in cluster i
+        denominator = len(cluster)
+        # avoid math domain errors by catching cases where num instances in cluster is 0
+        if count_instances_in_cluster[i] == 0:
+            ent = 0
+        else:
+            # sum for |classes| times to get entropy for a single cluster
+            ent += (numerator / denominator) * math.log((numerator / denominator), 2)
+
+    # negate entropy (account for negative in entropy eq)
+    return -ent
 
 
-def mean_entropy():
+def mean_entropy(clusters, instances_labels):
     """
     Find mean entropy of a clustering
     We want to minimize mean entropy
@@ -238,11 +260,21 @@ def mean_entropy():
                                 K
     mean entropy (Clustering) = ∑ mi/m entropy(Ci)
                                 1
-    where mi is the number of instances in cluster i
-    and m is the total number of instances in the clustering.
+    where mi (numerator) is the number of instances in cluster i
+    and m (denominator) is the total number of instances in the clustering.
+    :param clusters: all clusters:
+    :param instances_labels: real value of instances:
     :return mean_ent:
     """
     mean_ent = 0
+    # iterate for the total number of clusters/k times
+    for c in xrange(len(clusters)):
+        # numerator for multiplier of individual cluster entropy is len of one cluster
+        numerator = len(clusters[c])
+        # denominator for multiplier of individual cluster entropy is the total number of instances
+        denominator = len(instances_labels)
+        # sum entropy for all clusters multiplied by mi/m to get mean entropy
+        mean_ent += (numerator / denominator) * entropy(clusters[c], instances_labels)
 
     return mean_ent
 
