@@ -7,7 +7,7 @@
 # 3/8/16
 
 from __future__ import division
-import random, numpy as np, math
+import random, numpy as np, math, array
 
 ##################################
 # Functions for k-means clustering
@@ -17,7 +17,14 @@ import random, numpy as np, math
 ####################
 # Program parameters
 ####################
+# !! only use the k corresponding to the experiment you want to run
+# and comment out the other k value
+
+# exp 1:
 k = 10
+# exp 2:
+# k = 30
+
 # number of training instances
 num_training_instances = 3823
 
@@ -331,13 +338,16 @@ def confusion_matrix(most_freq_classes, test_clusters, labels_test):
     # confusion matrix
     conf_matrix = [[0 for i in xrange(k)] for i in xrange(k)]
 
-    # build confusion matrix by iterating through all test clusters
-    # and comparing class to actual class
+    # build confusion matrix by iterating through all test clusters and comparing class to actual class
+    # all clusters
     for i in xrange(len(test_clusters)):
+        # individual cluster
         for j in xrange(len(test_clusters[i])):
+            # get actual and predicted class to compare
             cluster_class = test_clusters[i][j]
             actual_class = labels_test[cluster_class]
             predicted_class = most_freq_classes[i]
+            # append to confusion matrix
             conf_matrix[predicted_class][actual_class] += 1
             # if predicted matches actual, increment correct count
             if predicted_class == actual_class:
@@ -370,3 +380,40 @@ def test_accuracy(correct_results, total_results):
     accuracy = correct_results / total_results
     print "Test accuracy:", accuracy
     return accuracy
+
+
+#############################
+# Visualization for test data
+#############################
+def visualization_results(center, idx, exp_num):
+    """
+    Visualize the resulting cluster centers.
+    For each of the 10 cluster centers, use the cluster center’s attributes
+    to draw the corresponding digit on an 8 x 8 grid.
+    :param center:
+    :param idx:
+    :param exp_num:
+    :return:
+    """
+    # create 8x8 matrix: print out 8 attributes for each row
+    width = 8
+    height = 8
+
+    # initialize with random values
+    arr = array.array('B')
+
+    # write center values to array
+    for i in xrange(0, width * height):
+        arr.append(int(round(center[i])) * 16)
+
+    # save to file
+    save_as = exp_num + "_" + str(idx) + ".png"
+    fout = open("pgm/" + save_as, 'wb')
+
+    # PGM Header
+    header = 'P5' + '\n' + str(width) + '  ' + str(height) + '  ' + str(255) + '\n'
+
+    # write data to file and close
+    fout.write(header)
+    arr.tofile(fout)
+    fout.close()

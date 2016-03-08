@@ -38,6 +38,10 @@ use the cluster center’s attributes to draw the corresponding digit on an 8 x 
 You can do this using any matrix-to-bit-map format – e.g., pgm: http://en.wikipedia.org/wiki/Netpbm_format#PGM_example
 """
 
+####################
+# Program parameters
+####################
+exp_num = "exp1"
 
 #######################################################################
 # K-means training algorithm (run 5 times)
@@ -228,6 +232,9 @@ def k_means_testing(features_test, labels_test):
     - Note: It’s possible that a particular class won’t be the most common one
         for any cluster, and therefore no test digit will ever get that label.
     3. Calculate the accuracy on the test data and create a confusion matrix for the results on the test data.
+    4. Visualize the resulting cluster centers.
+        For each of the 10 cluster centers, use the cluster center’s attributes
+        to draw the corresponding digit on an 8 x 8 grid.
     :param features_test:
     :param labels_test:
     :return:
@@ -271,18 +278,12 @@ def k_means_testing(features_test, labels_test):
     # accuracy is calculated in confusion matrix function
     test_acc = confusion_matrix(most_freq_classes, test_clusters, labels_test)
 
+    # 4. Visualize the resulting cluster centers.
+    # For each of the 10 cluster centers, use the cluster center’s attributes
+    # to draw the corresponding digit on an 8 x 8 grid.
+    for i in xrange(len(best_centers)):
+        visualization_results(best_centers[i], i, exp_num)
 
-
-
-
-
-###############
-# Visualization
-# for test data
-###############
-# (i*256)/16 to assign to "buckets" for PGM (PGM uses 1-256 instead of 1-16)
-# create 8x8 matrix:
-# print out 8 attributes for each row
 
 
 ######
