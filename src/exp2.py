@@ -149,11 +149,11 @@ def k_means_training(features_train, labels_train):
     # See k_means_training_stats
 
     # only need to keep centers from best k-means run for testing
-    with open('centers_outfile', 'w') as file_centers:
+    with open('centers_outfile_exp2', 'w') as file_centers:
         file_centers.writelines('\t'.join(str(j) for j in i) + '\n' for i in best_centers)
 
     # keep clusters from best centers for computing mean entropy
-    with open('clusters_outfile', 'w') as file_clusters:
+    with open('clusters_outfile_exp2', 'w') as file_clusters:
         file_clusters.writelines('\t'.join(str(j) for j in i) + '\n' for i in best_clusters)
 
     # return best SSE, best centers
@@ -170,7 +170,7 @@ def k_means_training_stats(labels_train):
     :return sum_squared_separation, mean_entropy:
     """
     # read in centers from best of 5 k-means training runs
-    centers = open("centers_outfile", "r")
+    centers = open("centers_outfile_exp2", "r")
     best_centers = []
     for line in centers:
         # Split the line on runs of whitespace
@@ -181,7 +181,7 @@ def k_means_training_stats(labels_train):
         best_centers.append(numbers_float)
 
     # read in clusters from best of 5 k-means training runs
-    clusters = open("clusters_outfile", "r")
+    clusters = open("clusters_outfile_exp2", "r")
     best_clusters = []
     for line in clusters:
         # Split the line on runs of whitespace
@@ -224,7 +224,7 @@ def k_means_testing(features_test, labels_test):
     """
     print "K-Means testing..."
     # read in centers from best of 5 k-means training runs
-    centers = open("centers_outfile", "r")
+    centers = open("centers_outfile_exp2", "r")
     best_centers = []
     for line in centers:
         # Split the line on runs of whitespace
@@ -287,10 +287,10 @@ def main():
 
     # Run k-means
     # run training to get SSE, then comment out to save runtime
-    # sum_sq_error, best_centers = k_means_training(features_train, labels_train)
-    # print "K-means training complete"
-    # print "-------------------------"
-    # print "Sum squared error from the best of 5 runs:", sum_sq_error
+    sum_sq_error, best_centers = k_means_training(features_train, labels_train)
+    print "K-means training complete"
+    print "-------------------------"
+    print "Sum squared error from the best of 5 runs:", sum_sq_error
 
     # get sum squared separation and mean entropy
     sum_sq_sep, mean_ent = k_means_training_stats(labels_train)

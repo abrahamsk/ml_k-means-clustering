@@ -21,9 +21,9 @@ import random, numpy as np, math, array
 # and comment out the other k value
 
 # exp 1:
-k = 10
+# k = 10
 # exp 2:
-# k = 30
+k = 30
 
 # number of training instances
 num_training_instances = 3823
@@ -407,7 +407,7 @@ def visualization_results(center, idx, exp_num):
         arr.append(int(round(center[i])) * 16)
 
     # save to file
-    save_as = exp_num + "_" + str(idx) + ".png"
+    save_as = exp_num + "_" + str(idx) + ".pgm"
     fout = open("pgm/" + save_as, 'wb')
 
     # PGM Header
