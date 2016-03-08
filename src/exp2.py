@@ -79,44 +79,44 @@ def k_means_training(features_train, labels_train):
         # keep a count of the num times there are empty clusters and rebuild if needed
         recluster_count = 0
         # rebuild a smaller number of times with k = 30 than k = 10
-        # while recluster_count < 5:
-        # rebuild centers and clusters
-        # get initial random clusters
-        centers = initialize_centers()
-        # compute Euclidean distances from centers to feature instances
-        dists = []
-        dists = compute_euclidean_distances(features_train, centers)
-        # build clusters using minimum distances, pass in list of distances from instances -> centers
-        clusters = []
-        num_instances = len(features_train)
-        clusters = build_clusters(dists, num_instances)
-        # check for empty clusters in rebuilt clusters
-        check_empty = False
-        check_empty = (check_empty_clusters(clusters))
-        recluster_count += 1
-        print "\nRebuilding clusters, time", recluster_count
+        while recluster_count < 5:
+            # rebuild centers and clusters
+            # get initial random clusters
+            centers = initialize_centers()
+            # compute Euclidean distances from centers to feature instances
+            dists = []
+            dists = compute_euclidean_distances(features_train, centers)
+            # build clusters using minimum distances, pass in list of distances from instances -> centers
+            clusters = []
+            num_instances = len(features_train)
+            clusters = build_clusters(dists, num_instances)
+            # check for empty clusters in rebuilt clusters
+            check_empty = False
+            check_empty = (check_empty_clusters(clusters))
+            recluster_count += 1
+            print "\nRebuilding clusters, time", recluster_count
 
         # track how many times kmeans runs
         k_means_iter_counter = 0
         # to store current centers for comparison
         store_centers = []
-        # # if there are no empty clusters, proceed
-        # if check_empty is False:
-        # continue until stopping conditions are met:
-        # stop iterating K-Means when all cluster centers stop changing
-        # or if the algorithm is stuck in an oscillation
-        while store_centers != centers:
-            k_means_iter_counter += 1
-            print "Old and new centers still not equal..."
-            # copy centers to compare with new centers
-            store_centers = [row[:] for row in centers]
-            # recompute the center of each cluster
-            centers = recompute_centroids(clusters, features_train)
-            dists = compute_euclidean_distances(features_train, centers)
-            clusters = build_clusters(dists, num_instances)
-            check_empty = (check_empty_clusters(clusters))
-            if check_empty:
-                print "New cluster is empty"
+        # if there are no empty clusters, proceed
+        if check_empty is False:
+            # continue until stopping conditions are met:
+            # stop iterating K-Means when all cluster centers stop changing
+            # or if the algorithm is stuck in an oscillation
+            while store_centers != centers:
+                k_means_iter_counter += 1
+                print "Old and new centers still not equal..."
+                # copy centers to compare with new centers
+                store_centers = [row[:] for row in centers]
+                # recompute the center of each cluster
+                centers = recompute_centroids(clusters, features_train)
+                dists = compute_euclidean_distances(features_train, centers)
+                clusters = build_clusters(dists, num_instances)
+                check_empty = (check_empty_clusters(clusters))
+                if check_empty:
+                    print "New cluster is empty"
         print "\nK-means ran", k_means_iter_counter, "time(s)"
         # print "Dist between old and new clusters", cluster_dist
 
