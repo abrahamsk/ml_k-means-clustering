@@ -340,7 +340,7 @@ def confusion_matrix(most_freq_classes, test_clusters, labels_test):
             predicted_class = most_freq_classes[i]
             conf_matrix[predicted_class][actual_class] += 1
             # if predicted matches actual, increment correct count
-            if cluster_class == predicted_class:
+            if predicted_class == actual_class:
                 correct += 1
             # increment total whether or not prediction is correct
             total += 1
