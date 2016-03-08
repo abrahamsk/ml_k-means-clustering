@@ -6,8 +6,7 @@
 # Katie Abrahams, abrahake@pdx.edu
 # 3/8/16
 
-from input import *
-import random, numpy as np, math, sys, timing
+import random, numpy as np, math
 
 ##################################
 # Functions for k-means clustering
@@ -201,31 +200,16 @@ def sum_squared_separation(centers):
     :param centers
     :return:
     """
+    print "Getting sum squared separation for best clusters..."
     sum_sq_separation = 0
-    for i in xrange(k):
-        for c in centers:
-            # run euclidean distance to get SSS
-            print "-"
-
-    # square result of euclidean distance for sss
+    for d in xrange(k - 1):
+        c = d + 1
+        while c < k:
+            # run euclidean distance from different clusters to get SSS
+            # square result of euclidean distance for sss
+            sum_sq_separation += (euclidean_dist(centers[d], centers[c])) ** 2
+            c += 1
     return sum_sq_separation
-
-
-def mean_entropy():
-    """
-    Find mean entropy of a clustering
-    We want to minimize mean entropy
-    Mean entropy of a clustering: Average entropy over all clusters in the clustering
-                                K
-    mean entropy (Clustering) = ∑ mi/m entropy(Ci)
-                                1
-    where mi is the number of instances in cluster i
-    and m is the total number of instances in the clustering.
-    :return mean_ent:
-    """
-    mean_ent = 0
-
-    return mean_ent
 
 
 def entropy():
@@ -244,3 +228,21 @@ def entropy():
     ent = 0
 
     return ent
+
+
+def mean_entropy():
+    """
+    Find mean entropy of a clustering
+    We want to minimize mean entropy
+    Mean entropy of a clustering: Average entropy over all clusters in the clustering
+                                K
+    mean entropy (Clustering) = ∑ mi/m entropy(Ci)
+                                1
+    where mi is the number of instances in cluster i
+    and m is the total number of instances in the clustering.
+    :return mean_ent:
+    """
+    mean_ent = 0
+
+    return mean_ent
+

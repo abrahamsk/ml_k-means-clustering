@@ -56,7 +56,7 @@ def k_means_training(features_train, labels_train):
     # initial cluster centers should be chosen at random, with each attribute Ai being an integer in the range [0,16]
     # for each of the 10 centers, generate a length 64 cluster
     # len 10 with 64 attributes at each of the 10 indices
-    # print "K-Means training"
+    print "K-Means training..."
 
     # track SSE over k-means runs
     sum_sq_errors = []
@@ -167,6 +167,9 @@ def k_means_training(features_train, labels_train):
     with open('outfile', 'w') as file:
         file.writelines('\t'.join(str(j) for j in i) + '\n' for i in best_centers)
 
+    # return best SSE
+    return min_val
+
 
 def k_means_training_stats():
     """
@@ -176,15 +179,22 @@ def k_means_training_stats():
     or the outfile with cluster centers won't be populated
     :return sum_squared_separation, mean_entropy:
     """
-    # read in centers from best of 5 k-means runs
+    # read in centers from best of 5 k-means training runs
     centers = open("outfile", "r")
     best_centers = []
     for line in centers:
         # Split the line on runs of whitespace
         number_strings = line.split()
         numbers = [n for n in number_strings]
+        numbers_float = [float(i) for i in numbers]
         # Add the row to the list
-        best_centers.append(numbers)
+        best_centers.append(numbers_float)
+
+    # cast strings in best_centers to floats
+    # best_centers_float = []
+    # for i in xrange(len(best_centers)):
+    #         for j in best_centers[i]:
+    #             best_centers_float[i].append(float(j))
 
     # sum squared separation (best run)
     sum_squared_sep = sum_squared_separation(best_centers)
@@ -192,32 +202,37 @@ def k_means_training_stats():
     # mean entropy (best run)
     mean_ent = mean_entropy()
 
-    return sum_squared_sep, mean_entropy
+    return sum_squared_sep, mean_ent
 
 
 def k_means_testing(features_test, labels_test):
     """
     Run k_means_training before this function
     or the outfile with cluster centers won't be populated
+
+    Use training clustering to classify the test data, as follows:
+    – Associate each cluster center with the most frequent class it contains.
+        If there is a tie for most frequent class, break the tie at random.
+    – Assign each test instance the class of the closest cluster center.
+        Again, ties are broken at random. Give the accuracy on the test data as well a confusion matrix.
+    – Note: It’s possible that a particular class won’t be the most common one
+        for any cluster, and therefore no test digit will ever get that label.
+    • Calculate the accuracy on the test data and create a confusion matrix for the results on the test data.
     :param features_test:
     :param labels_test:
     :return:
     """
-    print "K-Means Testing"
-    # read in trained data
+    print "K-Means testing..."
+    # read in centers from best of 5 k-means training runs
     centers = open("outfile", "r")
     best_centers = []
     for line in centers:
         # Split the line on runs of whitespace
         number_strings = line.split()
         numbers = [n for n in number_strings]
+        numbers_float = [float(i) for i in numbers]
         # Add the row to the list
-        best_centers.append(numbers)
-        # print len(data)
-        # print "--------"
-        # for d in data:
-        #     print len(d)
-
+        best_centers.append(numbers_float)
 
 ###############
 # Visualization
@@ -247,14 +262,21 @@ def main():
 
     # Run k-means
     # run training to get SSE, then comment out to save runtime
-    # k_means_training(features_train, labels_train)
+    # sum_sq_error = k_means_training(features_train, labels_train)
+    # print "K-means training complete"
+    # print "-------------------------"
+    # print "Sum squared error from the best of 5 runs:", sum_sq_error
 
     # get sum squared separation and mean entropy
-    sum_squared_separation, mean_entropy = k_means_training_stats()
-    print sum_squared_separation
-    print mean_entropy
+    sum_sq_sep, mean_ent = k_means_training_stats()
+    print "Sum squared separation:", sum_sq_sep
+    print "Mean entropy:", mean_ent
+
+    print "-------------------------"
 
     k_means_testing(features_test, labels_test)
+    print "K-means testing complete"
+    print "-------------------------"
 
 
 if __name__ == "__main__":
