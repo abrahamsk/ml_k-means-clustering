@@ -156,26 +156,49 @@ def k_means_training(features_train, labels_train):
     # find min SSE
     min_val, min_val_idx = min((min_val, min_val_idx) for (min_val_idx, min_val) in enumerate(sum_sq_errors))
     print "Min SSE:", min_val
-    print "All SSE", sum_sq_errors
-
+    # print "All SSE", sum_sq_errors
 
     # Choose the run (out of 5) that yields the smallest sum-squared error (SSE)
     # For this best run, in your report give the sum-squared error,
     # sum-squared separation, and mean entropy of the resulting clustering.
-
-    # sum squared separation (best run)
-
-    # mean entropy (best run)
-
+    # See k_means_training_stats
 
     # only need to keep centers from best k-means run for testing
     with open('outfile', 'w') as file:
         file.writelines('\t'.join(str(j) for j in i) + '\n' for i in best_centers)
 
 
+def k_means_training_stats():
+    """
+    Calculate sum squared separation and mean entropy
+    for the best run out of the five training runs
+    Run k_means_training before this function
+    or the outfile with cluster centers won't be populated
+    :return sum_squared_separation, mean_entropy:
+    """
+    # read in centers from best of 5 k-means runs
+    centers = open("outfile", "r")
+    best_centers = []
+    for line in centers:
+        # Split the line on runs of whitespace
+        number_strings = line.split()
+        numbers = [n for n in number_strings]
+        # Add the row to the list
+        best_centers.append(numbers)
+
+    # sum squared separation (best run)
+    sum_squared_sep = sum_squared_separation(best_centers)
+
+    # mean entropy (best run)
+    mean_ent = mean_entropy()
+
+    return sum_squared_sep, mean_entropy
+
 
 def k_means_testing(features_test, labels_test):
     """
+    Run k_means_training before this function
+    or the outfile with cluster centers won't be populated
     :param features_test:
     :param labels_test:
     :return:
@@ -183,11 +206,13 @@ def k_means_testing(features_test, labels_test):
     print "K-Means Testing"
     # read in trained data
     centers = open("outfile", "r")
-    data = []
+    best_centers = []
     for line in centers:
-        number_strings = line.split()  # Split the line on runs of whitespace
+        # Split the line on runs of whitespace
+        number_strings = line.split()
         numbers = [n for n in number_strings]
-        data.append(numbers)  # Add the "row" to your list.
+        # Add the row to the list
+        best_centers.append(numbers)
         # print len(data)
         # print "--------"
         # for d in data:
@@ -196,6 +221,7 @@ def k_means_testing(features_test, labels_test):
 
 ###############
 # Visualization
+# for test data
 ###############
 # (i*256)/16 to assign to "buckets" for PGM (PGM uses 1-256 instead of 1-16)
 # create 8x8 matrix:
@@ -220,7 +246,14 @@ def main():
     # centers = [i for i in xrange(0, 10)]
 
     # Run k-means
-    k_means_training(features_train, labels_train)
+    # run training to get SSE, then comment out to save runtime
+    # k_means_training(features_train, labels_train)
+
+    # get sum squared separation and mean entropy
+    sum_squared_separation, mean_entropy = k_means_training_stats()
+    print sum_squared_separation
+    print mean_entropy
+
     k_means_testing(features_test, labels_test)
 
 

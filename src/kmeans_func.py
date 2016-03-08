@@ -9,6 +9,11 @@
 from input import *
 import random, numpy as np, math, sys, timing
 
+##################################
+# Functions for k-means clustering
+# used in experiments 1 and 2
+##################################
+
 ####################
 # Program parameters
 ####################
@@ -169,6 +174,7 @@ def sum_squared_error(clusters, centers, instances):
     where Ci is the ith cluster, mi is the centroid of cluster Ci
     (the mean vector of all the data points in Ci), and
     d(x, mi) is the distance between data point x and centroid mi.
+    We want to minimize internal coherence of each cluster – i.e., minimize SSE.
     :param clusters:
     :param centers:
     :param instances:
@@ -180,5 +186,61 @@ def sum_squared_error(clusters, centers, instances):
     for l in xrange(k):
         for m in xrange(len(clusters[l])):
             n = clusters[l][m]
-            sse += euclidean_dist(instances[n], centers[l])
+            # square result of euclidean distance for sse
+            sse += (euclidean_dist(instances[n], centers[l])) ** 2
     return sse
+
+
+def sum_squared_separation(centers):
+    """
+    Calculate sum squared separation (SSS)
+    Sum Squared Separation (clustering)
+    = ∑ d(mi, mj)^2
+      (all distinct pairs of clusters i, j (i≠j))
+    We want to maximize pairwise separation of each cluster – i.e., maximize SSS
+    :param centers
+    :return:
+    """
+    sum_sq_separation = 0
+    for i in xrange(k):
+        for c in centers:
+            # run euclidean distance to get SSS
+            print "-"
+
+    # square result of euclidean distance for sss
+    return sum_sq_separation
+
+
+def mean_entropy():
+    """
+    Find mean entropy of a clustering
+    We want to minimize mean entropy
+    Mean entropy of a clustering: Average entropy over all clusters in the clustering
+                                K
+    mean entropy (Clustering) = ∑ mi/m entropy(Ci)
+                                1
+    where mi is the number of instances in cluster i
+    and m is the total number of instances in the clustering.
+    :return mean_ent:
+    """
+    mean_ent = 0
+
+    return mean_ent
+
+
+def entropy():
+    """
+    Find entropy of a single cluster
+    Entropy of a cluster: The degree to which a cluster consists of objects of a single class.
+                  |classes|
+    entropy(Ci) = − ∑        pi,j log2 pi,j
+                   j=1
+    where
+    pi, j = probability that a member of cluster i belongs to class j
+    = mi,j/mi , where mi,j is the number of instances in cluster i with class j
+    and mi is the number of instances in cluster i
+    :return ent:
+    """
+    ent = 0
+
+    return ent
