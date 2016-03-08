@@ -95,17 +95,15 @@ def build_clusters(euclidean_distances, num_instances):
         min_val, min_val_idx = min((min_val, min_val_idx) for (min_val_idx, min_val) in enumerate(dist_temp_collection))
 
         # build clusters using min distances
-        # save indexes for instances with min distances
+        # save indexes for instances with min distances to centers
         clusters[min_val_idx].append(i)
 
-    # print "\n", len(clusters[0])
-    # print clusters
     return clusters
 
 
 def check_empty_clusters(clusters):
     """
-    Check if there are empty clusters and rebuild if so
+    Check if there are empty clusters in the set of all clusters
     :param clusters:
     :return:
     """
@@ -116,19 +114,19 @@ def check_empty_clusters(clusters):
     return empty_clusters
 
 
-def update_centers(clusters, instances):
+def recompute_centroids(clusters, instances):
     """
     Recompute centroid of each cluster
     :param clusters:
     :param instances:
     :return:
     """
-    new_centers = []
-    # iterate k times
+    new_centroids = []
+    # iterate k times ( = num centers)
     for i in xrange(k):
         one_cluster = get_features_for_cluster(clusters[i], instances)
-        new_centers.append(np.mean(np.asarray(one_cluster), axis=0).tolist())
-    return new_centers
+        new_centroids.append(np.mean(np.asarray(one_cluster), axis=0).tolist())
+    return new_centroids
 
 
 def get_features_for_cluster(cluster, instances):
@@ -143,27 +141,6 @@ def get_features_for_cluster(cluster, instances):
         features.append(instances[cluster[c]])
     # print features
     return features
-
-
-def check_stopping_cond(store_centers, centers):
-    """
-    Check loop stopping condition while running k-means
-    by comparing distances between current (stored) clusters and new clusters
-    :param store_centers:
-    :param centers:
-    :return:
-    """
-    check_threshold_stopping_cond = False
-    dists = []
-    for i in xrange(k):
-        dists.append(euclidean_dist(store_centers[i], centers[i]))
-        # print "dists", dists
-        for d in dists:
-            if d <= .001:
-                check_threshold_stopping_cond = True
-            else:
-                check_threshold_stopping_cond = False
-    return check_threshold_stopping_cond
 
 
 def sum_squared_error(clusters, centers, instances):
@@ -203,10 +180,12 @@ def sum_squared_separation(centers):
     """
     sum_sq_separation = 0
     for d in xrange(k - 1):
+        # set up indices
         c = d + 1
+        # loop while c is less than num centers
         while c < k:
             # run euclidean distance from different clusters to get SSS
-            # square result of euclidean distance for sss
+            # square result of euclidean distance for SSS
             sum_sq_separation += (euclidean_dist(centers[d], centers[c])) ** 2
             c += 1
     return sum_sq_separation
@@ -280,3 +259,51 @@ def mean_entropy(clusters, instances_labels):
 
     return mean_ent
 
+
+###############################
+# Functions for k-means testing
+###############################
+def get_most_freq_classes(clusters, labels):
+    """
+    # - Associate each cluster center with the most frequent class it contains.
+    # If there is a tie for most frequent class, break the tie at random
+    # - Assign each test instance the class of the closest cluster center.
+    :param clusters:
+    :param labels:
+    :return:
+    """
+    most_frequent_class = []
+    # iterate through clusters and find most frequent class for each cluster
+    for i in xrange(len(clusters)):
+        most_frequent_class.append(most_freq_class(clusters[i], labels))
+    return most_frequent_class
+
+
+def most_freq_class(cluster, label):
+    """
+    Get most frequent class of in a cluster
+    # Associate each cluster center with the most frequent class it contains.
+    # If there is a tie for most frequent class, break the tie at random
+    :param cluster:
+    :param label:
+    :return:
+    """
+    count_class = [0 for i in xrange(k)]
+    # loop for all items in a cluster and count labels in cluster
+    for i in xrange(len(cluster)):
+        count_class[label[cluster[i]]] += 1
+    # print "count class:", count_class
+    # find the most frequent class
+    max_class_val = max(count_class)
+    max_index = count_class.index(max_class_val)
+    # If there is a tie for most frequent class, break the tie at random
+    break_tie = []
+    for i in xrange(k):
+        if max_class_val == count_class[i]:
+            break_tie.append(i)
+    # print "break tie:", break_tie
+    if break_tie:
+        choice = random.choice(break_tie)
+        return choice
+
+    return max_index

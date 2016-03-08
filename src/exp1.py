@@ -110,7 +110,6 @@ def k_means_training(features_train, labels_train):
 
         # track how many times kmeans runs
         k_means_iter_counter = 0
-        threshold_stopping_cond = False
         # to store current centers for comparison
         store_centers = []
         # if there are no empty clusters, proceed
@@ -118,28 +117,20 @@ def k_means_training(features_train, labels_train):
             # continue until stopping conditions are met:
             # stop iterating K-Means when all cluster centers stop changing
             # or if the algorithm is stuck in an oscillation
-            # while threshold_stopping_cond is False:
             while store_centers != centers:
                 k_means_iter_counter += 1
                 print "Old and new centers still not equal..."
                 # copy centers to compare with new centers
                 store_centers = [row[:] for row in centers]
                 # recompute the center of each cluster
-                centers = update_centers(clusters, features_train)
+                centers = recompute_centroids(clusters, features_train)
                 dists = compute_euclidean_distances(features_train, centers)
                 clusters = build_clusters(dists, num_instances)
                 check_empty = (check_empty_clusters(clusters))
                 if check_empty:
                     print "New cluster is empty"
-                # check stopping condition after creating clusters
-                # cluster_dist = compute_euclidean_distances(store_centers, centers)
-                if check_stopping_cond(store_centers, centers) is True:
-                    threshold_stopping_cond = True
         print "\nK-means ran", k_means_iter_counter, "time(s)"
         # print "Dist between old and new clusters", cluster_dist
-        # print store_centers
-        # print "-------------------"
-        # print centers
 
         # compute sum squared error to select best run out of 5
         current_sse = sum_squared_error(clusters, centers, features_train)
@@ -253,13 +244,12 @@ def k_means_testing(features_test, labels_test):
         # Add the row to the list
         best_centers.append(numbers_float)
 
-    # 1. Associate each cluster center with the most frequent class it contains
-    
-    # compute Euclidean distances from centers to feature instances
+    # compute Euclidean distances from centers to feature instances for test data
+    # use best centers from training data
     test_dists = []
     test_dists = compute_euclidean_distances(features_test, best_centers)
 
-    # build clusters using minimum distances, pass in list of distances from instances -> centers
+    # build test clusters using minimum distances, pass in list of distances from instances -> centers
     test_clusters = []
     num_instances = len(features_test)
     test_clusters = build_clusters(test_dists, num_instances)
@@ -268,7 +258,20 @@ def k_means_testing(features_test, labels_test):
     check_empty = (check_empty_clusters(test_clusters))
     # keep a count of the num times there are empty clusters and rebuild is needed
     if check_empty is False:
-        print "No empty clusters"
+        print "No empty test clusters"
+
+    # 1. Associate each cluster center with the most frequent class it contains.
+    # If there is a tie for most frequent class, break the tie at random
+    # 2. Assign each test instance the class of the closest cluster center.
+    most_freq_classes = []
+    most_freq_classes = get_most_freq_classes(test_clusters, labels_test)
+    print "Most frequent classes:", most_freq_classes
+    # for i in most_freq_class: print i
+
+    # 3. Calculate the accuracy on the test data and create a confusion matrix for the results on the test data.
+    acc = test_accuracy()
+    confusion_matrix()
+
 
 
 
