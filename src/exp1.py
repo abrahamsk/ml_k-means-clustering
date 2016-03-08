@@ -51,7 +51,8 @@ def k_means_training(features_train, labels_train):
     Run k-means algorithm
     :param features_train:
     :param labels_train:
-    :return:
+    :return best_sse:
+    :return best_centers:
     """
     # initial cluster centers should be chosen at random, with each attribute Ai being an integer in the range [0,16]
     # for each of the 10 centers, generate a length 64 cluster
@@ -88,7 +89,7 @@ def k_means_training(features_train, labels_train):
         # if there are any empty clusters present
         check_empty = False
         check_empty = (check_empty_clusters(clusters))
-        # keep a count of the num times there are empty clusters and rebuild is needed
+        # keep a count of the num times there are empty clusters and rebuild if needed
         recluster_count = 0
         while check_empty is True:
             # rebuild centers and clusters
@@ -177,8 +178,8 @@ def k_means_training(features_train, labels_train):
     with open('clusters_outfile', 'w') as file_clusters:
         file_clusters.writelines('\t'.join(str(j) for j in i) + '\n' for i in best_clusters)
 
-    # return best SSE
-    return min_val
+    # return best SSE, best centers
+    return min_val, best_centers
 
 
 def k_means_training_stats(labels_train):
@@ -229,13 +230,13 @@ def k_means_testing(features_test, labels_test):
     or the outfile with cluster centers won't be populated
 
     Use training clustering to classify the test data, as follows:
-    – Associate each cluster center with the most frequent class it contains.
+    1. Associate each cluster center with the most frequent class it contains.
         If there is a tie for most frequent class, break the tie at random.
-    – Assign each test instance the class of the closest cluster center.
+    2. Assign each test instance the class of the closest cluster center.
         Again, ties are broken at random. Give the accuracy on the test data as well a confusion matrix.
-    – Note: It’s possible that a particular class won’t be the most common one
+    - Note: It’s possible that a particular class won’t be the most common one
         for any cluster, and therefore no test digit will ever get that label.
-    • Calculate the accuracy on the test data and create a confusion matrix for the results on the test data.
+    3. Calculate the accuracy on the test data and create a confusion matrix for the results on the test data.
     :param features_test:
     :param labels_test:
     :return:
@@ -251,6 +252,25 @@ def k_means_testing(features_test, labels_test):
         numbers_float = [float(i) for i in numbers]
         # Add the row to the list
         best_centers.append(numbers_float)
+
+    # 1. Associate each cluster center with the most frequent class it contains
+    
+    # compute Euclidean distances from centers to feature instances
+    test_dists = []
+    test_dists = compute_euclidean_distances(features_test, best_centers)
+
+    # build clusters using minimum distances, pass in list of distances from instances -> centers
+    test_clusters = []
+    num_instances = len(features_test)
+    test_clusters = build_clusters(test_dists, num_instances)
+
+    # check for empty clusters
+    check_empty = (check_empty_clusters(test_clusters))
+    # keep a count of the num times there are empty clusters and rebuild is needed
+    if check_empty is False:
+        print "No empty clusters"
+
+
 
 ###############
 # Visualization
@@ -280,7 +300,7 @@ def main():
 
     # Run k-means
     # run training to get SSE, then comment out to save runtime
-    # sum_sq_error = k_means_training(features_train, labels_train)
+    # sum_sq_error, best_centers = k_means_training(features_train, labels_train)
     # print "K-means training complete"
     # print "-------------------------"
     # print "Sum squared error from the best of 5 runs:", sum_sq_error
