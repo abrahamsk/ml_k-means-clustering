@@ -37,7 +37,7 @@ def initialize_centers():
     Initialize random centers
     :return:
     """
-    centers = [[random.randint(0, 16) for i in xrange(0, 64)] for j in xrange(0, 10)]
+    centers = [[random.randint(0, 16) for i in xrange(0, 64)] for j in xrange(0, k)]
     return centers
 
 
@@ -52,8 +52,8 @@ def compute_euclidean_distances(instances, centers):
     """
     # all distances for all centers
     all_distances = []
-    # loop 10 times for k = 10
-    for i in xrange(0, 10):
+    # loop k times for k = 10 or 30 (exp1 or 2)
+    for i in xrange(0, k):
         # distances for a single center
         dist_for_one_center = []
         for j in xrange(len(instances)):
@@ -388,7 +388,7 @@ def test_accuracy(correct_results, total_results):
 def visualization_results(center, idx, exp_num):
     """
     Visualize the resulting cluster centers.
-    For each of the 10 cluster centers, use the cluster center’s attributes
+    For each of the k (10 or 30) cluster centers, use the cluster center’s attributes
     to draw the corresponding digit on an 8 x 8 grid.
     :param center:
     :param idx:
