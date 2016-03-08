@@ -256,7 +256,7 @@ def k_means_testing(features_test, labels_test):
 
     # check for empty clusters
     check_empty = (check_empty_clusters(test_clusters))
-    # keep a count of the num times there are empty clusters and rebuild is needed
+    # check that there are no empty clusters
     if check_empty is False:
         print "No empty test clusters"
 
@@ -266,11 +266,12 @@ def k_means_testing(features_test, labels_test):
     most_freq_classes = []
     most_freq_classes = get_most_freq_classes(test_clusters, labels_test)
     print "Most frequent classes:", most_freq_classes
-    # for i in most_freq_class: print i
 
     # 3. Calculate the accuracy on the test data and create a confusion matrix for the results on the test data.
-    acc = test_accuracy()
-    confusion_matrix()
+    # accuracy is calculated in confusion matrix function
+    test_acc = confusion_matrix(most_freq_classes, test_clusters, labels_test)
+
+
 
 
 

@@ -307,3 +307,66 @@ def most_freq_class(cluster, label):
         return choice
 
     return max_index
+
+
+def confusion_matrix(most_freq_classes, test_clusters, labels_test):
+    """
+    Create a confusion matrix for the results on the test data
+    Call accuracy function for accuracy of test data
+    :param most_freq_classes:
+    :param test_clusters:
+    :param labels_test:
+    :return:
+    """
+    # num correct
+    correct = 0
+    # num total
+    total = 0
+    # test accuracy
+    acc = 0.0
+    # col headers (0-9)
+    predicted = [i for i in xrange(k)]
+    # row headers (0-9)
+    actual = [i for i in xrange(k)]
+    # confusion matrix
+    conf_matrix = [[0 for i in xrange(k)] for i in xrange(k)]
+
+    # build confusion matrix by iterating through all test clusters
+    # and comparing class to actual class
+    for i in xrange(len(test_clusters)):
+        for j in xrange(len(test_clusters[i])):
+            cluster_class = test_clusters[i][j]
+            actual_class = labels_test[cluster_class]
+            predicted_class = most_freq_classes[i]
+            conf_matrix[predicted_class][actual_class] += 1
+            # if predicted matches actual, increment correct count
+            if cluster_class == predicted_class:
+                correct += 1
+            # increment total whether or not prediction is correct
+            total += 1
+
+    # output confusion matrix
+    print "---------------"
+    print "         Confusion matrix"
+    print "         Predicted Class"
+    print " ", predicted
+    for i in xrange(len(conf_matrix)):
+        print actual[i], conf_matrix[i]
+
+    print "---------------"
+    acc = test_accuracy(correct, total)
+    print "---------------"
+    return acc
+
+
+def test_accuracy(correct_results, total_results):
+    """
+    Calculate the accuracy on the test data
+    using the confusion matrix computations
+    :param correct_results:
+    :param total_results:
+    :return:
+    """
+    accuracy = correct_results / total_results
+    print "Test accuracy:", accuracy
+    return accuracy
