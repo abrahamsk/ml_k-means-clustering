@@ -39,10 +39,11 @@ exp2.py
 kmeans_func.py  
 centers.outfile  
 clusters.outfile  
+README.md  
 
 optdigits/optdigits.train and optdigits/optdigits.test were not submitted to reduce clutter, though they are required to run the program.
 
 timing.py was only used for benchmarking and was not submitted.
 
-Troubleshooting:
+Troubleshooting:  
 Add __init__.py if there's trouble running
